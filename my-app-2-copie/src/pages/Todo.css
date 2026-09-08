@@ -1,0 +1,216 @@
+.todo-page {
+  min-height: 100vh;
+  padding: 50px 20px;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+  font-family: Arial, sans-serif;
+}
+
+/* Carte principale */
+
+.todo-container {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 35px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.12);
+}
+
+/* Titre */
+
+.todo-title {
+  margin: 0 0 10px;
+  color: #1e293b;
+  font-size: 36px;
+  text-align: center;
+}
+
+.todo-subtitle {
+  margin-bottom: 30px;
+  color: #64748b;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* =========================
+   FORMULAIRE
+========================= */
+
+.todo-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.todo-input {
+  flex: 1;
+  padding: 14px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.todo-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.todo-add-button {
+  padding: 14px 22px;
+  border: none;
+  border-radius: 10px;
+  background-color: #6366f1;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.todo-add-button:hover {
+  background-color: #4f46e5;
+  transform: translateY(-2px);
+}
+
+/* =========================
+   MESSAGES
+========================= */
+
+.todo-loading {
+  margin: 20px 0;
+  color: #6366f1;
+  text-align: center;
+}
+
+.todo-error {
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  text-align: center;
+}
+
+/* =========================
+   LISTE DES TÂCHES
+========================= */
+
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background-color: #f8fafc;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.todo-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(15, 23, 42, 0.08);
+}
+
+/* Texte de la tâche */
+
+.todo-text {
+  flex: 1;
+  color: #334155;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+/* Zone des boutons */
+
+.todo-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Bouton supprimer */
+
+.todo-delete-button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.todo-delete-button:hover {
+  background-color: #fecaca;
+}
+
+/* Bouton terminer */
+
+.todo-complete-button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  background-color: #dcfce7;
+  color: #15803d;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.todo-complete-button:hover {
+  background-color: #bbf7d0;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 600px) {
+  .todo-page {
+    padding: 25px 12px;
+  }
+
+  .todo-container {
+    padding: 22px;
+  }
+
+  .todo-title {
+    font-size: 28px;
+  }
+
+  .todo-form {
+    flex-direction: column;
+  }
+
+  .todo-add-button {
+    width: 100%;
+  }
+
+  .todo-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .todo-actions {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .todo-delete-button,
+  .todo-complete-button {
+    width: 100%;
+  }
+}

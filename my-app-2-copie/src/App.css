@@ -1,0 +1,141 @@
+.todo-container {
+  width: 450px;
+
+  margin: 40px auto;
+
+  background: white;
+
+  padding: 25px;
+
+  border-radius: 10px;
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.todo-container h1 {
+  text-align: center;
+
+  margin-bottom: 20px;
+}
+
+.input-area {
+  display: flex;
+
+  gap: 10px;
+
+  margin-bottom: 20px;
+}
+
+.input-area input {
+  flex: 1;
+
+  padding: 10px;
+
+  font-size: 16px;
+}
+
+.input-area button {
+  padding: 10px 15px;
+
+  background: #4caf50;
+
+  color: white;
+
+  border: none;
+
+  cursor: pointer;
+
+  border-radius: 5px;
+}
+
+ul {
+  padding: 0;
+}
+
+li {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  list-style: none;
+
+  padding: 10px;
+
+  margin-top: 10px;
+
+  background: #f5f5f5;
+
+  border-radius: 6px;
+}
+
+li button {
+  margin-left: 8px;
+
+  padding: 6px 10px;
+
+  border: none;
+
+  cursor: pointer;
+
+  border-radius: 4px;
+}
+
+li button:hover {
+  opacity: 0.8;
+}
+
+/* ===== NAVBAR ===== */
+
+nav {
+  background-color: #2c3e50;
+  padding: 18px;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+nav a:hover {
+  color: #f1c40f;
+}
+
+.page {
+  width: 800px;
+  max-width: 90%;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.15);
+}
+
+.page h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.page p {
+  text-align: center;
+  font-size: 18px;
+  color: #555;
+  line-height: 28px;
+}
+
+.page h1 {
+  font-size: 40px;
+}
+
+.page p {
+  margin-top: 15px;
+}
