@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const API_URL = "http://localhost:5000/todos";
+const API_URL = `${process.env.REACT_APP_API_URL}/todos`;
 
 function useTodo() {
   const [todos, setTodos] = useState([]);
@@ -37,11 +37,11 @@ function useTodo() {
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title
-        })
+          title,
+        }),
       });
 
       if (!response.ok) {
@@ -50,10 +50,7 @@ function useTodo() {
 
       const newTodo = await response.json();
 
-      setTodos((previousTodos) => [
-        ...previousTodos,
-        newTodo
-      ]);
+      setTodos((previousTodos) => [...previousTodos, newTodo]);
     } catch (error) {
       setError(error.message);
     }
@@ -65,7 +62,7 @@ function useTodo() {
       setError("");
 
       const response = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
       });
 
       if (!response.ok) {
@@ -73,7 +70,7 @@ function useTodo() {
       }
 
       setTodos((previousTodos) =>
-        previousTodos.filter((todo) => todo.id !== id)
+        previousTodos.filter((todo) => todo.id !== id),
       );
     } catch (error) {
       setError(error.message);
@@ -88,12 +85,12 @@ function useTodo() {
       const response = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           title,
-          completed
-        })
+          completed,
+        }),
       });
 
       if (!response.ok) {
@@ -103,9 +100,7 @@ function useTodo() {
       const updatedTodo = await response.json();
 
       setTodos((previousTodos) =>
-        previousTodos.map((todo) =>
-          todo.id === id ? updatedTodo : todo
-        )
+        previousTodos.map((todo) => (todo.id === id ? updatedTodo : todo)),
       );
     } catch (error) {
       setError(error.message);
@@ -124,7 +119,7 @@ function useTodo() {
     getTodos,
     createTodo,
     deleteTodo,
-    updateTodo
+    updateTodo,
   };
 }
 
