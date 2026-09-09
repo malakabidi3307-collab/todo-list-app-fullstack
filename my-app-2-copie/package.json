@@ -10,18 +10,18 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-  "start": "react-scripts start",
-  "build": "react-scripts build",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject",
-  "e2e": "playwright test",
-  "e2e:chrome": "playwright test --headed",
-  "e2e:report": "playwright show-report"
-},
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "e2e": "playwright test",
+    "e2e:chrome": "playwright test --headed",
+    "e2e:report": "playwright show-report"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
