@@ -8,21 +8,12 @@ beforeEach(() => {
 });
 
 test("doit créer une nouvelle tâche", async () => {
-  const todos = [
-    {
-      id: 1,
-      title: "Apprendre React",
-      completed: false
-    }
-  ];
-
   const newTodo = {
-    id: 2,
+    id: "507f1f77bcf86cd799439011",
     title: "Apprendre Jest",
-    completed: false
+    completed: false,
   };
 
-  todoRepository.getTodos.mockResolvedValue(todos);
   todoRepository.createTodo.mockResolvedValue(newTodo);
 
   const result = await todoService.createTodo("Apprendre Jest");
@@ -30,8 +21,7 @@ test("doit créer une nouvelle tâche", async () => {
   expect(result).toEqual(newTodo);
 
   expect(todoRepository.createTodo).toHaveBeenCalledWith({
-    id: 2,
     title: "Apprendre Jest",
-    completed: false
+    completed: false,
   });
 });

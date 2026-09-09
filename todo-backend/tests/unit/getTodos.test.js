@@ -10,10 +10,10 @@ beforeEach(() => {
 test("doit retourner toutes les tâches", async () => {
   const todos = [
     {
-      id: 1,
+      id: "507f1f77bcf86cd799439011",
       title: "Apprendre React",
-      completed: false
-    }
+      completed: false,
+    },
   ];
 
   todoRepository.getTodos.mockResolvedValue(todos);

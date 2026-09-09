@@ -8,13 +8,11 @@ function todoRoutes(req, res) {
 
   const pathname = url.pathname;
 
-  // GET /todos
   if (req.method === "GET" && pathname === "/todos") {
     todoController.getTodos(req, res);
     return;
   }
 
-  // GET /todos/:id
   if (req.method === "GET" && pathname.startsWith("/todos/")) {
     const id = pathname.split("/")[2];
 
@@ -22,13 +20,11 @@ function todoRoutes(req, res) {
     return;
   }
 
-  // POST /todos
   if (req.method === "POST" && pathname === "/todos") {
     todoController.createTodo(req, res);
     return;
   }
 
-  // PUT /todos/:id
   if (req.method === "PUT" && pathname.startsWith("/todos/")) {
     const id = pathname.split("/")[2];
 
@@ -36,7 +32,6 @@ function todoRoutes(req, res) {
     return;
   }
 
-  // DELETE /todos/:id
   if (
     req.method === "DELETE" &&
     pathname.startsWith("/todos/")
@@ -48,12 +43,12 @@ function todoRoutes(req, res) {
   }
 
   res.writeHead(404, {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   });
 
   res.end(
     JSON.stringify({
-      message: "Route introuvable"
+      message: "Route introuvable",
     })
   );
 }

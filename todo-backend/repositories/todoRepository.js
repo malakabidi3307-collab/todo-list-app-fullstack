@@ -1,55 +1,71 @@
-const pool = require("../database/db");
-async function getTodos() {
-  const result = await pool.query(
-    "SELECT * FROM todos ORDER BY id"
-  );
+const Todo = require("../models/todoModel");
+const mongoose = require("mongoose");
 
-  return result.rows;
+function formatTodo(todo) {
+  if (!todo) {
+    return null;
+  }
+
+  return {
+    id: todo._id.toString(),
+    title: todo.title,
+    completed: todo.completed,
+  };
+}
+
+async function getTodos() {
+  const todos = await Todo.find().sort({ _id: 1 }).lean();
+
+  return todos.map(formatTodo);
 }
 
 async function getTodoById(id) {
-  const result = await pool.query(
-    "SELECT * FROM todos WHERE id = $1",
-    [id]
-  );
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return null;
+  }
 
-  return result.rows[0];
+  const todo = await Todo.findById(id).lean();
+
+  return formatTodo(todo);
 }
 
 async function createTodo(todo) {
-  const result = await pool.query(
-    `INSERT INTO todos (title, completed)
-     VALUES ($1, $2)
-     RETURNING *`,
-    [todo.title, todo.completed]
-  );
+  const createdTodo = await Todo.create({
+    title: todo.title,
+    completed: todo.completed ?? false,
+  });
 
-  return result.rows[0];
+  return formatTodo(createdTodo);
 }
 
 async function deleteTodo(id) {
-  const result = await pool.query(
-    "DELETE FROM todos WHERE id = $1 RETURNING *",
-    [id]
-  );
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return null;
+  }
 
-  return result.rows[0] || null;
+  const deletedTodo = await Todo.findByIdAndDelete(id).lean();
+
+  return formatTodo(deletedTodo);
 }
 
 async function updateTodo(id, updatedTodo) {
-  const result = await pool.query(
-    `UPDATE todos
-     SET title = $1, completed = $2
-     WHERE id = $3
-     RETURNING *`,
-    [
-      updatedTodo.title,
-      updatedTodo.completed,
-      id
-    ]
-  );
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return null;
+  }
 
-  return result.rows[0] || null;
+  const todo = await Todo.findByIdAndUpdate(
+    id,
+    {
+      title: updatedTodo.title,
+      completed: updatedTodo.completed,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  ).lean();
+
+  return formatTodo(todo);
 }
 
 module.exports = {
@@ -57,5 +73,5 @@ module.exports = {
   getTodoById,
   createTodo,
   deleteTodo,
-  updateTodo
+  updateTodo,
 };

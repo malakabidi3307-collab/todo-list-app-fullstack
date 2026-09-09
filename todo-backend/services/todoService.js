@@ -9,12 +9,9 @@ async function getTodoById(id) {
 }
 
 async function createTodo(title) {
-  const todos = await todoRepository.getTodos();
-
   const newTodo = {
-    id: todos.length + 1,
     title: title,
-    completed: false
+    completed: false,
   };
 
   return await todoRepository.createTodo(newTodo);
@@ -34,7 +31,7 @@ async function updateTodo(id, title, completed) {
   const updatedTodo = {
     id: id,
     title: title,
-    completed: completed
+    completed: completed,
   };
 
   return await todoRepository.updateTodo(id, updatedTodo);
@@ -45,5 +42,5 @@ module.exports = {
   createTodo,
   getTodoById,
   deleteTodo,
-  updateTodo
+  updateTodo,
 };

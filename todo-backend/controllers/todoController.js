@@ -19,10 +19,11 @@ async function getTodos(req, res) {
     res.end(
       JSON.stringify({
         message: "Erreur lors de la récupération des tâches",
-      }),
+      })
     );
   }
 }
+
 async function getTodoById(req, res, id) {
   try {
     const todo = await todoService.getTodoById(id);
@@ -35,7 +36,7 @@ async function getTodoById(req, res, id) {
       res.end(
         JSON.stringify({
           message: "Tâche introuvable",
-        }),
+        })
       );
 
       return;
@@ -56,19 +57,20 @@ async function getTodoById(req, res, id) {
     res.end(
       JSON.stringify({
         message: "Erreur lors de la récupération de la tâche",
-      }),
+      })
     );
   }
 }
+
 async function createTodo(req, res) {
-  try {
-    let body = "";
+  let body = "";
 
-    req.on("data", (chunk) => {
-      body += chunk;
-    });
+  req.on("data", (chunk) => {
+    body += chunk;
+  });
 
-    req.on("end", async () => {
+  req.on("end", async () => {
+    try {
       const data = JSON.parse(body);
 
       const newTodo = await todoService.createTodo(data.title);
@@ -78,36 +80,37 @@ async function createTodo(req, res) {
       });
 
       res.end(JSON.stringify(newTodo));
-    });
-  } catch (error) {
-    console.error(error);
+    } catch (error) {
+      console.error(error);
 
-    res.writeHead(500, {
-      "Content-Type": "application/json",
-    });
+      res.writeHead(500, {
+        "Content-Type": "application/json",
+      });
 
-    res.end(
-      JSON.stringify({
-        message: "Erreur lors de la création",
-      }),
-    );
-  }
+      res.end(
+        JSON.stringify({
+          message: "Erreur lors de la création",
+        })
+      );
+    }
+  });
 }
+
 async function updateTodo(req, res, id) {
-  try {
-    let body = "";
+  let body = "";
 
-    req.on("data", (chunk) => {
-      body += chunk;
-    });
+  req.on("data", (chunk) => {
+    body += chunk;
+  });
 
-    req.on("end", async () => {
+  req.on("end", async () => {
+    try {
       const data = JSON.parse(body);
 
       const updatedTodo = await todoService.updateTodo(
         id,
         data.title,
-        data.completed,
+        data.completed
       );
 
       if (!updatedTodo) {
@@ -118,7 +121,7 @@ async function updateTodo(req, res, id) {
         res.end(
           JSON.stringify({
             message: "Tâche introuvable",
-          }),
+          })
         );
 
         return;
@@ -129,21 +132,22 @@ async function updateTodo(req, res, id) {
       });
 
       res.end(JSON.stringify(updatedTodo));
-    });
-  } catch (error) {
-    console.error(error);
+    } catch (error) {
+      console.error(error);
 
-    res.writeHead(500, {
-      "Content-Type": "application/json",
-    });
+      res.writeHead(500, {
+        "Content-Type": "application/json",
+      });
 
-    res.end(
-      JSON.stringify({
-        message: "Erreur lors de la modification",
-      }),
-    );
-  }
+      res.end(
+        JSON.stringify({
+          message: "Erreur lors de la modification",
+        })
+      );
+    }
+  });
 }
+
 async function deleteTodo(req, res, id) {
   try {
     const deletedTodo = await todoService.deleteTodo(id);
@@ -156,7 +160,7 @@ async function deleteTodo(req, res, id) {
       res.end(
         JSON.stringify({
           message: "Tâche introuvable",
-        }),
+        })
       );
 
       return;
@@ -177,7 +181,7 @@ async function deleteTodo(req, res, id) {
     res.end(
       JSON.stringify({
         message: "Erreur lors de la suppression",
-      }),
+      })
     );
   }
 }

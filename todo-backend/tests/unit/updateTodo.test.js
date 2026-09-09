@@ -8,16 +8,18 @@ beforeEach(() => {
 });
 
 test("doit modifier une tâche existante", async () => {
+  const id = "507f1f77bcf86cd799439011";
+
   const existingTodo = {
-    id: 1,
+    id,
     title: "Ancien titre",
-    completed: false
+    completed: false,
   };
 
   const updatedTodo = {
-    id: 1,
+    id,
     title: "Nouveau titre",
-    completed: true
+    completed: true,
   };
 
   todoRepository.getTodoById.mockResolvedValue(existingTodo);
@@ -25,7 +27,7 @@ test("doit modifier une tâche existante", async () => {
   todoRepository.updateTodo.mockResolvedValue(updatedTodo);
 
   const result = await todoService.updateTodo(
-    1,
+    id,
     "Nouveau titre",
     true
   );
@@ -33,16 +35,18 @@ test("doit modifier une tâche existante", async () => {
   expect(result).toEqual(updatedTodo);
 
   expect(todoRepository.updateTodo).toHaveBeenCalledWith(
-    1,
+    id,
     updatedTodo
   );
 });
 
 test("doit retourner null si la tâche n'existe pas", async () => {
-  todoRepository.getTodoById.mockResolvedValue(undefined);
+  const id = "507f1f77bcf86cd799439099";
+
+  todoRepository.getTodoById.mockResolvedValue(null);
 
   const result = await todoService.updateTodo(
-    99,
+    id,
     "Nouveau titre",
     true
   );

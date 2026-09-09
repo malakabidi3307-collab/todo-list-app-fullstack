@@ -19,8 +19,6 @@
   },
   "dependencies": {
     "dotenv": "^17.4.2",
-    "mongodb": "^7.6.0",
-    "mongoose": "^9.9.5",
-    "pg": "^8.23.0"
+    "mongoose": "^9.9.5"
   }
 }
