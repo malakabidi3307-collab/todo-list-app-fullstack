@@ -4,11 +4,17 @@ const { connectDB } = require("./database/db");
 
 const PORT = process.env.PORT || 5000;
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 const app = http.createServer((req, res) => {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "http://localhost:3000"
-  );
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
 
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -32,10 +38,8 @@ const app = http.createServer((req, res) => {
 if (require.main === module) {
   connectDB()
     .then(() => {
-      app.listen(PORT, () => {
-        console.log(
-          `Serveur démarré sur http://localhost:${PORT}`
-        );
+      app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Serveur démarré sur le port ${PORT}`);
       });
     })
     .catch((error) => {
