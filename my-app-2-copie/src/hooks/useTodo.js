@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react";
-
-const API_URL = `${process.env.REACT_APP_API_URL}/todos`;
-
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 function useTodo() {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  // Récupérer toutes les tâches
+  function getHeaders() {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+  }
   async function getTodos() {
     try {
       setLoading(true);
       setError("");
-
-      const response = await fetch(API_URL);
-
-      if (!response.ok) {
-        throw new Error("Erreur lors de la récupération des tâches");
-      }
-
+      const response = await fetch(`${API_URL}/todos`, {
+        headers: getHeaders(),
+      });
       const data = await response.json();
-
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Erreur lors de la récupération des tâches",
+        );
+      }
       setTodos(data);
     } catch (error) {
       setError(error.message);
@@ -28,47 +31,36 @@ function useTodo() {
       setLoading(false);
     }
   }
-
-  // Créer une tâche
   async function createTodo(title) {
     try {
       setError("");
-
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/todos`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: getHeaders(),
         body: JSON.stringify({
           title,
         }),
       });
-
+      const data = await response.json();
       if (!response.ok) {
-        throw new Error("Erreur lors de la création");
+        throw new Error(data.message || "Erreur lors de la création");
       }
-
-      const newTodo = await response.json();
-
-      setTodos((previousTodos) => [...previousTodos, newTodo]);
+      setTodos((previousTodos) => [...previousTodos, data]);
     } catch (error) {
       setError(error.message);
     }
   }
-
-  // Supprimer une tâche
   async function deleteTodo(id) {
     try {
       setError("");
-
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await fetch(`${API_URL}/todos/${id}`, {
         method: "DELETE",
+        headers: getHeaders(),
       });
-
+      const data = await response.json();
       if (!response.ok) {
-        throw new Error("Erreur lors de la suppression");
+        throw new Error(data.message || "Erreur lors de la suppression");
       }
-
       setTodos((previousTodos) =>
         previousTodos.filter((todo) => todo.id !== id),
       );
@@ -76,42 +68,33 @@ function useTodo() {
       setError(error.message);
     }
   }
-
-  // Modifier une tâche
   async function updateTodo(id, title, completed) {
     try {
       setError("");
-
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await fetch(`${API_URL}/todos/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: getHeaders(),
         body: JSON.stringify({
           title,
           completed,
         }),
       });
-
+      const data = await response.json();
       if (!response.ok) {
-        throw new Error("Erreur lors de la modification");
+        throw new Error(data.message || "Erreur lors de la modification");
       }
-
-      const updatedTodo = await response.json();
-
       setTodos((previousTodos) =>
-        previousTodos.map((todo) => (todo.id === id ? updatedTodo : todo)),
+        previousTodos.map((todo) => (todo.id === id ? data : todo)),
       );
     } catch (error) {
       setError(error.message);
     }
   }
-
-  // Charger les tâches automatiquement
   useEffect(() => {
-    getTodos();
+    if (localStorage.getItem("token")) {
+      getTodos();
+    }
   }, []);
-
   return {
     todos,
     loading,
@@ -122,5 +105,4 @@ function useTodo() {
     updateTodo,
   };
 }
-
 export default useTodo;

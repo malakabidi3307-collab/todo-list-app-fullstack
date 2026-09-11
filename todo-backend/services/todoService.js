@@ -1,46 +1,36 @@
 const todoRepository = require("../repositories/todoRepository");
-
-async function getTodos() {
-  return await todoRepository.getTodos();
+async function getTodos(userId) {
+  return await todoRepository.getTodos(userId);
 }
-
-async function getTodoById(id) {
-  return await todoRepository.getTodoById(id);
-}
-
-async function createTodo(title) {
-  const newTodo = {
-    title: title,
-    completed: false,
-  };
-
-  return await todoRepository.createTodo(newTodo);
-}
-
-async function deleteTodo(id) {
-  return await todoRepository.deleteTodo(id);
-}
-
-async function updateTodo(id, title, completed) {
-  const existingTodo = await todoRepository.getTodoById(id);
-
-  if (!existingTodo) {
-    return null;
+async function createTodo(title, userId) {
+  if (!title || !title.trim()) {
+    throw new Error("TITLE_REQUIRED");
   }
-
-  const updatedTodo = {
-    id: id,
-    title: title,
-    completed: completed,
-  };
-
-  return await todoRepository.updateTodo(id, updatedTodo);
+  return await todoRepository.createTodo(
+    title.trim(),
+    userId
+  );
 }
-
+async function updateTodo(id, title, completed, userId) {
+  if (!title || !title.trim()) {
+    throw new Error("TITLE_REQUIRED");
+  }
+  return await todoRepository.updateTodo(
+    id,
+    title.trim(),
+    Boolean(completed),
+    userId
+  );
+}
+async function deleteTodo(id, userId) {
+  return await todoRepository.deleteTodo(
+    id,
+    userId
+  );
+}
 module.exports = {
   getTodos,
   createTodo,
-  getTodoById,
-  deleteTodo,
   updateTodo,
+  deleteTodo
 };

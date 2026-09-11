@@ -1,77 +1,52 @@
 const Todo = require("../models/todoModel");
-const mongoose = require("mongoose");
-
 function formatTodo(todo) {
-  if (!todo) {
-    return null;
-  }
-
   return {
     id: todo._id.toString(),
     title: todo.title,
-    completed: todo.completed,
+    completed: todo.completed
   };
 }
-
-async function getTodos() {
-  const todos = await Todo.find().sort({ _id: 1 }).lean();
-
+async function getTodos(userId) {
+  const todos = await Todo.find({ userId }).sort({
+    createdAt: 1
+  });
   return todos.map(formatTodo);
 }
-
-async function getTodoById(id) {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return null;
-  }
-
-  const todo = await Todo.findById(id).lean();
-
+async function createTodo(title, userId) {
+  const todo = await Todo.create({
+    title,
+    completed: false,
+    userId
+  });
   return formatTodo(todo);
 }
-
-async function createTodo(todo) {
-  const createdTodo = await Todo.create({
-    title: todo.title,
-    completed: todo.completed ?? false,
-  });
-
-  return formatTodo(createdTodo);
-}
-
-async function deleteTodo(id) {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return null;
-  }
-
-  const deletedTodo = await Todo.findByIdAndDelete(id).lean();
-
-  return formatTodo(deletedTodo);
-}
-
-async function updateTodo(id, updatedTodo) {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return null;
-  }
-
-  const todo = await Todo.findByIdAndUpdate(
-    id,
+async function updateTodo(id, title, completed, userId) {
+  const todo = await Todo.findOneAndUpdate(
     {
-      title: updatedTodo.title,
-      completed: updatedTodo.completed,
+      _id: id,
+      userId
+    },
+    {
+      title,
+      completed
     },
     {
       new: true,
-      runValidators: true,
+      runValidators: true
     }
-  ).lean();
-
-  return formatTodo(todo);
+  );
+  return todo ? formatTodo(todo) : null;
 }
-
+async function deleteTodo(id, userId) {
+  const todo = await Todo.findOneAndDelete({
+    _id: id,
+    userId
+  });
+  return todo !== null;
+}
 module.exports = {
   getTodos,
-  getTodoById,
   createTodo,
-  deleteTodo,
   updateTodo,
+  deleteTodo
 };
