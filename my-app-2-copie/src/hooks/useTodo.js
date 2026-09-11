@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 function useTodo() {
   const [todos, setTodos] = useState([]);
@@ -11,7 +11,7 @@ function useTodo() {
       Authorization: `Bearer ${token}`,
     };
   }
-  async function getTodos() {
+  const getTodos = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
@@ -30,7 +30,7 @@ function useTodo() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
   async function createTodo(title) {
     try {
       setError("");
@@ -91,10 +91,10 @@ function useTodo() {
     }
   }
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      getTodos();
-    }
-  }, []);
+  if (localStorage.getItem("token")) {
+    getTodos();
+  }
+}, [getTodos]);
   return {
     todos,
     loading,
