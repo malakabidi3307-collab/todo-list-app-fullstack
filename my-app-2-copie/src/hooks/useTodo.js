@@ -4,11 +4,9 @@ function useTodo() {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  function getHeaders() {
-    const token = localStorage.getItem("token");
+  async function getHeaders() {
     return {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     };
   }
   const getTodos = useCallback(async () => {
@@ -16,7 +14,8 @@ function useTodo() {
       setLoading(true);
       setError("");
       const response = await fetch(`${API_URL}/todos`, {
-        headers: getHeaders(),
+        headers: await getHeaders(),
+        credentials: "include",
       });
       const data = await response.json();
       if (!response.ok) {
@@ -36,7 +35,8 @@ function useTodo() {
       setError("");
       const response = await fetch(`${API_URL}/todos`, {
         method: "POST",
-        headers: getHeaders(),
+        headers: await getHeaders(),
+        credentials: "include",
         body: JSON.stringify({
           title,
         }),
@@ -55,7 +55,8 @@ function useTodo() {
       setError("");
       const response = await fetch(`${API_URL}/todos/${id}`, {
         method: "DELETE",
-        headers: getHeaders(),
+        headers: await getHeaders(),
+        credentials: "include",
       });
       const data = await response.json();
       if (!response.ok) {
@@ -73,7 +74,8 @@ function useTodo() {
       setError("");
       const response = await fetch(`${API_URL}/todos/${id}`, {
         method: "PUT",
-        headers: getHeaders(),
+        headers: await getHeaders(),
+        credentials: "include",
         body: JSON.stringify({
           title,
           completed,
@@ -91,10 +93,8 @@ function useTodo() {
     }
   }
   useEffect(() => {
-  if (localStorage.getItem("token")) {
     getTodos();
-  }
-}, [getTodos]);
+  }, [getTodos]);
   return {
     todos,
     loading,

@@ -1,47 +1,46 @@
 const jwt = require("jsonwebtoken");
+function getTokenFromCookie(req) {
+  const cookieHeader = req.headers.cookie;
+  if (!cookieHeader) {
+    return null;
+  }
+  const cookies = cookieHeader.split(";");
+  for (const cookie of cookies) {
+    const [name, ...valueParts] = cookie.trim().split("=");
+    if (name === "token") {
+      return decodeURIComponent(valueParts.join("="));
+    }
+  }
+  return null;
+}
 function authMiddleware(req, res) {
-  const authorization = req.headers.authorization;
-  if (!authorization) {
+  const token = getTokenFromCookie(req);
+  if (!token) {
     res.writeHead(401, {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     });
     res.end(
       JSON.stringify({
-        message: "Token manquant"
-      })
+        message: "Authentification requise",
+      }),
     );
     return false;
   }
-  const parts = authorization.split(" ");
-  if (parts.length !== 2 || parts[0] !== "Bearer") {
-    res.writeHead(401, {
-      "Content-Type": "application/json"
-    });
-    res.end(
-      JSON.stringify({
-        message: "Format du token invalide"
-      })
-    );
-    return false;
-  }
-  const token = parts[1];
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    );
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     return true;
   } catch (error) {
     res.writeHead(401, {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     });
     res.end(
       JSON.stringify({
-        message: "Token invalide ou expiré"
-      })
+        message: "Token invalide ou expiré",
+      }),
     );
     return false;
   }
 }
+
 module.exports = authMiddleware;

@@ -15,6 +15,16 @@ function readBody(req) {
     req.on("error", reject);
   });
 }
+function setAuthCookie(res, token) {
+  const isProduction = process.env.NODE_ENV === "production";
+  res.setHeader(
+    "Set-Cookie",
+    `token=${token}; HttpOnly; ${isProduction ? "Secure; " : ""}SameSite=${isProduction ? "None" : "Lax"}; Path=/; Max-Age=86400`,
+  );
+}
+function clearAuthCookie(res) {
+  res.setHeader("Set-Cookie", "token=; HttpOnly; Path=/; Max-Age=0");
+}
 async function register(req, res) {
   try {
     const body = await readBody(req);
@@ -31,10 +41,15 @@ async function register(req, res) {
       return;
     }
     const result = await authService.register(username, email, password);
+    setAuthCookie(res, result.token);
     res.writeHead(201, {
       "Content-Type": "application/json",
     });
-    res.end(JSON.stringify(result));
+    res.end(
+      JSON.stringify({
+        user: result.user,
+      }),
+    );
   } catch (error) {
     if (error.message === "EMAIL_ALREADY_EXISTS") {
       res.writeHead(409, {
@@ -85,10 +100,15 @@ async function login(req, res) {
       return;
     }
     const result = await authService.login(email, password);
+    setAuthCookie(res, result.token);
     res.writeHead(200, {
       "Content-Type": "application/json",
     });
-    res.end(JSON.stringify(result));
+    res.end(
+      JSON.stringify({
+        user: result.user,
+      }),
+    );
   } catch (error) {
     if (error.message === "INVALID_CREDENTIALS") {
       res.writeHead(401, {
@@ -123,7 +143,19 @@ async function login(req, res) {
     );
   }
 }
+function logout(req, res) {
+  clearAuthCookie(res);
+  res.writeHead(200, {
+    "Content-Type": "application/json",
+  });
+  res.end(
+    JSON.stringify({
+      message: "Déconnexion réussie",
+    }),
+  );
+}
 module.exports = {
   register,
   login,
+  logout,
 };

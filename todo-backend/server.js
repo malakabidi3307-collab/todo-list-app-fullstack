@@ -4,14 +4,25 @@ const authRoutes = require("./routes/authRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 const { connectDB } = require("./database/db");
 const PORT = process.env.PORT || 5000;
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://todo-list-app-fullstack-yxar.vercel.app",
+];
 const app = http.createServer((req, res) => {
-  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-  res.setHeader("Access-Control-Allow-Origin", frontendUrl);
+  const origin = req.headers.origin;
+  if (
+    allowedOrigins.includes(origin) ||
+    (origin && origin.endsWith(".vercel.app"))
+  ) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, OPTIONS",
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
   if (req.method === "OPTIONS") {
     res.writeHead(204);
     res.end();

@@ -12,6 +12,7 @@ function useAuth() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           username,
           email,
@@ -22,8 +23,6 @@ function useAuth() {
       if (!response.ok) {
         throw new Error(data.message || "Erreur lors de l'inscription");
       }
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
       return true;
     } catch (error) {
       setError(error.message);
@@ -41,6 +40,7 @@ function useAuth() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           email,
           password,
@@ -50,8 +50,6 @@ function useAuth() {
       if (!response.ok) {
         throw new Error(data.message || "Erreur lors de la connexion");
       }
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
       return true;
     } catch (error) {
       setError(error.message);
@@ -60,15 +58,15 @@ function useAuth() {
       setLoading(false);
     }
   }
-  function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-  }
-  function getToken() {
-    return localStorage.getItem("token");
-  }
-  function isAuthenticated() {
-    return Boolean(localStorage.getItem("token"));
+  async function logout() {
+    try {
+      await fetch(`${API_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
   return {
     loading,
@@ -76,8 +74,6 @@ function useAuth() {
     register,
     login,
     logout,
-    getToken,
-    isAuthenticated,
   };
 }
 export default useAuth;
