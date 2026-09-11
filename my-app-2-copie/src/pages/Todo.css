@@ -214,3 +214,43 @@
     width: 100%;
   }
 }
+
+.todo-edit-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.todo-edit-button {
+  background: #007bff;
+  color: white;
+}
+
+.todo-edit-button:hover {
+  background: #0056b3;
+}
+
+.todo-save-button {
+  background: #28a745;
+  color: white;
+}
+
+.todo-save-button:hover {
+  background: #218838;
+}
+
+.todo-cancel-button {
+  background: #6c757d;
+  color: white;
+}
+
+.todo-cancel-button:hover {
+  background: #545b62;
+}
+
+.todo-completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
