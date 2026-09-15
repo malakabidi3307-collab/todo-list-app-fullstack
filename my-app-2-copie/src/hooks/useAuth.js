@@ -1,8 +1,20 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 function useAuth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const refreshAccessToken = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_URL}/auth/refresh`, {
+        method: "POST",
+        credentials: "include",
+      });
+      return response.ok;
+    } catch (error) {
+      console.error("Erreur refresh token :", error);
+      return false;
+    }
+  }, []);
   async function register(username, email, password) {
     try {
       setLoading(true);
@@ -73,6 +85,7 @@ function useAuth() {
     error,
     register,
     login,
+    refreshAccessToken,
     logout,
   };
 }

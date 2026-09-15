@@ -7,6 +7,12 @@ function authRoutes(req, res) {
   if (req.method === "POST" && url.pathname === "/auth/login") {
     return authController.login(req, res);
   }
+  if (req.method === "POST" && url.pathname === "/auth/refresh") {
+    return authController.refresh(req, res);
+  }
+  if (req.method === "GET" && url.pathname === "/auth/me") {
+    return authController.me(req, res);
+  }
   if (req.method === "POST" && url.pathname === "/auth/logout") {
     return authController.logout(req, res);
   }

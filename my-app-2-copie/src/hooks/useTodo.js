@@ -1,22 +1,43 @@
 import { useCallback, useEffect, useState } from "react";
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+async function refreshAccessToken() {
+  try {
+    const response = await fetch(`${API_URL}/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+    });
+    return response.ok;
+  } catch (error) {
+    console.error("Erreur refresh token :", error);
+    return false;
+  }
+}
+async function apiFetch(url, options = {}, retry = true) {
+  const response = await fetch(url, {
+    ...options,
+    credentials: "include",
+  });
+  if (response.status !== 401 || !retry) {
+    return response;
+  }
+  const refreshed = await refreshAccessToken();
+  if (!refreshed) {
+    return response;
+  }
+  return fetch(url, {
+    ...options,
+    credentials: "include",
+  });
+}
 function useTodo() {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  async function getHeaders() {
-    return {
-      "Content-Type": "application/json",
-    };
-  }
   const getTodos = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
-      const response = await fetch(`${API_URL}/todos`, {
-        headers: await getHeaders(),
-        credentials: "include",
-      });
+      const response = await apiFetch(`${API_URL}/todos`);
       const data = await response.json();
       if (!response.ok) {
         throw new Error(
@@ -30,68 +51,75 @@ function useTodo() {
       setLoading(false);
     }
   }, []);
-  async function createTodo(title) {
+  const addTodo = async (title) => {
     try {
       setError("");
-      const response = await fetch(`${API_URL}/todos`, {
+      const response = await apiFetch(`${API_URL}/todos`, {
         method: "POST",
-        headers: await getHeaders(),
-        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           title,
         }),
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || "Erreur lors de la création");
+        throw new Error(data.message || "Erreur lors de l'ajout de la tâche");
       }
-      setTodos((previousTodos) => [...previousTodos, data]);
+      setTodos((currentTodos) => [...currentTodos, data]);
+      return true;
     } catch (error) {
       setError(error.message);
+      return false;
     }
-  }
-  async function deleteTodo(id) {
+  };
+  const updateTodo = async (id, updates) => {
     try {
       setError("");
-      const response = await fetch(`${API_URL}/todos/${id}`, {
-        method: "DELETE",
-        headers: await getHeaders(),
-        credentials: "include",
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Erreur lors de la suppression");
-      }
-      setTodos((previousTodos) =>
-        previousTodos.filter((todo) => todo.id !== id),
-      );
-    } catch (error) {
-      setError(error.message);
-    }
-  }
-  async function updateTodo(id, title, completed) {
-    try {
-      setError("");
-      const response = await fetch(`${API_URL}/todos/${id}`, {
+      const response = await apiFetch(`${API_URL}/todos/${id}`, {
         method: "PUT",
-        headers: await getHeaders(),
-        credentials: "include",
-        body: JSON.stringify({
-          title,
-          completed,
-        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updates),
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || "Erreur lors de la modification");
+        throw new Error(
+          data.message || "Erreur lors de la modification de la tâche",
+        );
       }
-      setTodos((previousTodos) =>
-        previousTodos.map((todo) => (todo.id === id ? data : todo)),
+      setTodos((currentTodos) =>
+        currentTodos.map((todo) => (todo._id === id ? data : todo)),
       );
+      return true;
     } catch (error) {
       setError(error.message);
+      return false;
     }
-  }
+  };
+  const deleteTodo = async (id) => {
+    try {
+      setError("");
+      const response = await apiFetch(`${API_URL}/todos/${id}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Erreur lors de la suppression de la tâche",
+        );
+      }
+      setTodos((currentTodos) =>
+        currentTodos.filter((todo) => todo._id !== id),
+      );
+      return true;
+    } catch (error) {
+      setError(error.message);
+      return false;
+    }
+  };
   useEffect(() => {
     getTodos();
   }, [getTodos]);
@@ -100,9 +128,9 @@ function useTodo() {
     loading,
     error,
     getTodos,
-    createTodo,
-    deleteTodo,
+    addTodo,
     updateTodo,
+    deleteTodo,
   };
 }
 export default useTodo;
