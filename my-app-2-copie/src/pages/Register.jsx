@@ -7,9 +7,9 @@ function Register({ onRegister }) {
   const { register, loading, error } = useAuth();
   async function handleSubmit(event) {
     event.preventDefault();
-    const success = await register(username, email, password);
-    if (success) {
-      onRegister();
+    const result = await register(username, email, password);
+    if (result.success) {
+      onRegister(result);
     }
   }
   return (

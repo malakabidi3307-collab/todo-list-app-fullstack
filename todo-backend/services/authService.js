@@ -6,11 +6,12 @@ function createAccessToken(user) {
     {
       id: user._id.toString(),
       email: user.email,
+      role: user.role,
     },
     process.env.JWT_SECRET,
     {
       expiresIn: "15m",
-    },
+    }
   );
 }
 function createRefreshToken(user) {
@@ -18,11 +19,12 @@ function createRefreshToken(user) {
     {
       id: user._id.toString(),
       email: user.email,
+      role: user.role,
     },
     process.env.JWT_REFRESH_SECRET,
     {
       expiresIn: "7d",
-    },
+    }
   );
 }
 async function register(username, email, password) {
@@ -35,6 +37,7 @@ async function register(username, email, password) {
     username,
     email,
     password: hashedPassword,
+    role: "user",
   });
   const accessToken = createAccessToken(user);
   const refreshToken = createRefreshToken(user);
@@ -45,6 +48,7 @@ async function register(username, email, password) {
       id: user._id.toString(),
       username: user.username,
       email: user.email,
+      role: user.role,
     },
   };
 }
@@ -53,7 +57,10 @@ async function login(email, password) {
   if (!user) {
     throw new Error("INVALID_CREDENTIALS");
   }
-  const passwordCorrect = await bcrypt.compare(password, user.password);
+  const passwordCorrect = await bcrypt.compare(
+    password,
+    user.password
+  );
   if (!passwordCorrect) {
     throw new Error("INVALID_CREDENTIALS");
   }
@@ -66,31 +73,37 @@ async function login(email, password) {
       id: user._id.toString(),
       username: user.username,
       email: user.email,
+      role: user.role,
     },
   };
 }
 function refreshAccessToken(refreshToken) {
   try {
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-    const accessToken = jwt.sign(
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET
+    );
+    return jwt.sign(
       {
         id: decoded.id,
         email: decoded.email,
+        role: decoded.role,
       },
       process.env.JWT_SECRET,
       {
         expiresIn: "15m",
-      },
+      }
     );
-    return accessToken;
   } catch (error) {
     throw new Error("INVALID_REFRESH_TOKEN");
   }
 }
 function getUserFromAccessToken(token) {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return decoded;
+    return jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
   } catch (error) {
     throw new Error("INVALID_ACCESS_TOKEN");
   }

@@ -1,7 +1,10 @@
 const http = require("http");
+
 const todoRoutes = require("./routes/todoRoutes");
 const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
+const roleMiddleware = require("./middleware/roleMiddleware");
 const { connectDB } = require("./database/db");
 const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
@@ -11,6 +14,7 @@ const allowedOrigins = [
 ];
 const app = http.createServer((req, res) => {
   const origin = req.headers.origin;
+
   if (
     allowedOrigins.includes(origin) ||
     (origin && origin.endsWith(".vercel.app"))
@@ -31,6 +35,21 @@ const app = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   if (url.pathname.startsWith("/auth/")) {
     authRoutes(req, res);
+    return;
+  }
+  if (
+    url.pathname === "/admin/users" ||
+    url.pathname.startsWith("/admin/users/")
+  ) {
+    const authenticated = authMiddleware(req, res);
+    if (!authenticated) {
+      return;
+    }
+    const isAdmin = roleMiddleware("admin")(req, res);
+    if (!isAdmin) {
+      return;
+    }
+    adminRoutes(req, res);
     return;
   }
   if (url.pathname === "/todos" || url.pathname.startsWith("/todos/")) {

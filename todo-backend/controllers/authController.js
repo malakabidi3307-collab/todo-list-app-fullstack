@@ -39,7 +39,9 @@ function setAuthCookies(res, accessToken, refreshToken) {
   const cookieOptions = getCookieOptions();
   res.setHeader("Set-Cookie", [
     `token=${encodeURIComponent(accessToken)}; ${cookieOptions}; Max-Age=900`,
-    `refreshToken=${encodeURIComponent(refreshToken)}; ${cookieOptions}; Max-Age=604800`,
+    `refreshToken=${encodeURIComponent(
+      refreshToken,
+    )}; ${cookieOptions}; Max-Age=604800`,
   ]);
 }
 function setAccessTokenCookie(res, accessToken) {
@@ -237,7 +239,6 @@ async function me(req, res) {
       return;
     }
     const decoded = authService.getUserFromAccessToken(token);
-
     res.writeHead(200, {
       "Content-Type": "application/json",
     });
@@ -246,6 +247,7 @@ async function me(req, res) {
         user: {
           id: decoded.id,
           email: decoded.email,
+          role: decoded.role,
         },
       }),
     );

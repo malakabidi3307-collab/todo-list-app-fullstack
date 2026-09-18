@@ -6,9 +6,9 @@ function Login({ onLogin }) {
   const { login, loading, error } = useAuth();
   async function handleSubmit(event) {
     event.preventDefault();
-    const success = await login(email, password);
-    if (success) {
-      onLogin();
+    const result = await login(email, password);
+    if (result.success) {
+      onLogin(result);
     }
   }
   return (

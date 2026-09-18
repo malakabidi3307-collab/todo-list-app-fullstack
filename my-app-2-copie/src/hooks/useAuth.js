@@ -1,83 +1,141 @@
 import { useCallback, useState } from "react";
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_URL =
+  process.env.REACT_APP_API_URL ||
+  "http://localhost:5000";
 function useAuth() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const refreshAccessToken = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_URL}/auth/refresh`, {
-        method: "POST",
-        credentials: "include",
-      });
-      return response.ok;
-    } catch (error) {
-      console.error("Erreur refresh token :", error);
-      return false;
-    }
-  }, []);
-  async function register(username, email, password) {
+  const [loading, setLoading] =
+    useState(false);
+  const [error, setError] =
+    useState("");
+  const refreshAccessToken =
+    useCallback(async () => {
+      try {
+        const response = await fetch(
+          `${API_URL}/auth/refresh`,
+          {
+            method: "POST",
+            credentials: "include",
+          }
+        );
+        return response.ok;
+      } catch (error) {
+        console.error(
+          "Erreur refresh token :",
+          error
+        );
+        return false;
+      }
+    }, []);
+  async function register(
+    username,
+    email,
+    password
+  ) {
     try {
       setLoading(true);
       setError("");
-      const response = await fetch(`${API_URL}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-        }),
-      });
-      const data = await response.json();
+      const response = await fetch(
+        `${API_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            username,
+            email,
+            password,
+          }),
+        }
+      );
+      const data =
+        await response.json();
       if (!response.ok) {
-        throw new Error(data.message || "Erreur lors de l'inscription");
+        throw new Error(
+          data.message ||
+            "Erreur lors de l'inscription"
+        );
       }
-      return true;
+      return {
+        success: true,
+        user: data.user,
+        message:
+          "Inscription réussie",
+      };
     } catch (error) {
       setError(error.message);
-      return false;
+      return {
+        success: false,
+        user: null,
+        message: error.message,
+      };
     } finally {
       setLoading(false);
     }
   }
-  async function login(email, password) {
+  async function login(
+    email,
+    password
+  ) {
     try {
       setLoading(true);
       setError("");
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
-      const data = await response.json();
+      const response = await fetch(
+        `${API_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      );
+      const data =
+        await response.json();
       if (!response.ok) {
-        throw new Error(data.message || "Erreur lors de la connexion");
+        throw new Error(
+          data.message ||
+            "Erreur lors de la connexion"
+        );
       }
-      return true;
+      return {
+        success: true,
+        user: data.user,
+        message:
+          "Connexion réussie",
+      };
     } catch (error) {
       setError(error.message);
-      return false;
+      return {
+        success: false,
+        user: null,
+        message: error.message,
+      };
     } finally {
       setLoading(false);
     }
   }
   async function logout() {
     try {
-      await fetch(`${API_URL}/auth/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
+      await fetch(
+        `${API_URL}/auth/logout`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
     } catch (error) {
-      console.error(error);
+      console.error(
+        "Erreur lors de la déconnexion :",
+        error
+      );
     }
   }
   return {
